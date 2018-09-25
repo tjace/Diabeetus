@@ -9,7 +9,7 @@ class SimpleUtil {
      * Runs Simple Perceptron a specified number of times with a given learning rate and examples.
      * Weights are given random, small values
      *
-     * @return
+     * @return weights trained by running Simple Perceptron a number of times
      */
     static ArrayList<Double> simplePerceptronEpochs(int epochs, ArrayList<Example> examples, double learnRate) {
         ArrayList<Double> weights = GeneralUtil.smallRandoms(20);
@@ -23,12 +23,10 @@ class SimpleUtil {
         for (int i = 0; i < epochs; i++) {
             Collections.shuffle(examples);
 
-            //Probably don't ned to reassign to weights,
+            //No need to reassign to weights,
             // since it is changed within the method.
-            weights = simplePerceptron(examples, weights, learnRate);
-
+            simplePerceptron(examples, weights, learnRate);
         }
-
         return weights;
     }
 
@@ -56,25 +54,18 @@ class SimpleUtil {
             boolean sign = GeneralUtil.sgn(weights, ex);
             boolean actual = GeneralUtil.toBool(ex.get(0));
 
-            if (sign == actual)
-                continue;
+            if (sign != actual) {
+                double y = ex.get(0);
 
-            if (actual) {
+                //Update each weight
+                //w <- w + (atualSign * learnRate * featureValue)
                 for (int i = 1; i < 20; i++) {
-                    weights.set(i, weights.get(i) + (learnRate * ex.get(i)));
+                    weights.set(i, weights.get(i) + (y * learnRate * ex.get(i)));
                 }
-                weights.set(0, weights.get(0) + learnRate);
-
-            } else {
-                for (int i = 1; i < 20; i++) {
-                    weights.set(i, weights.get(i) - (learnRate * ex.get(i)));
-                }
-                weights.set(0, weights.get(0) - learnRate);
-
+                //b <- b + (actualSign * learnRate)
+                weights.set(0, weights.get(0) + (y * learnRate));
             }
-
         }
-
 
         return weights;
     }
@@ -88,6 +79,7 @@ class SimpleUtil {
      * @return the best learning rate
      * @throws Exception when label is bad in data
      */
+    @SuppressWarnings("Duplicates")
     static double crossValidateRates(double[] rates, String[] crosses) throws Exception {
         double bestRate = -1.0;
         double minError = -1.0;

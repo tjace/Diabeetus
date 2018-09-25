@@ -52,7 +52,7 @@ public class Main {
                 String[] usedFiles = new String[crosses.length - 1];
                 String testFile = "";
                 int found = 0;
-                for (int j; j < crosses.length; j++) {
+                for (int j = 0; j < crosses.length; j++) {
                     if (j == i) {
                         found = 1;
                         testFile = crosses[j];

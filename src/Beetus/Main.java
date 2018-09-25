@@ -4,10 +4,8 @@ import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class Main {
@@ -30,34 +28,79 @@ public class Main {
         }
     }
 
+    /**
+     * Returns the best of the passed-in rates
+     *
+     * @param rates
+     * @param crosses
+     * @return
+     * @throws Exception
+     */
     private static double crossValidateRates(double[] rates, String[] crosses) throws Exception {
-        double bestRate = 0;
-        double bestError = 0;
+        double bestRate = -1.0;
+        double minError = -1.0;
+        double errorSum;
+        double error;
 
         for (int r = 0; r < rates.length; r++) {
+
+            errorSum = 0.0;
+
             for (int i = 0; i < crosses.length; i++) {
 
                 //Use all of the files but one
                 String[] usedFiles = new String[crosses.length - 1];
+                String testFile = "";
                 int found = 0;
                 for (int j; j < crosses.length; j++) {
                     if (j == i) {
                         found = 1;
+                        testFile = crosses[j];
                         continue;
                     }
-                    usedFiles[j - found] = crosses[j - found];
+                    usedFiles[j - found] = crosses[j];
                 }
 
                 //Read the examples from the chosen files
                 ArrayList<Example> ex = readExamples(usedFiles);
 
-                //
+                //Using the rate for this run, epoch 10x over the targets
                 ArrayList<Double> weights = new ArrayList<>();
-                    weights = simplePerceptronEpochs(10, ex, rates[r]);
+                weights = simplePerceptronEpochs(10, ex, rates[r]);
 
+                //Test the weights on the unused cross file
+                double thisError = testError(weights, testFile);
+                errorSum += thisError;
+            }
+
+            error = errorSum / crosses.length;
+
+            if (error < minError || minError == -1.0) {
+                minError = error;
+                bestRate = rates[r];
             }
         }
 
+        return bestRate;
+    }
+
+    private static double testError(ArrayList<Double> weights, String testFile) throws Exception {
+        ArrayList<Example> ex = readExamples(testFile);
+
+        int failed = 0;
+        int total = ex.size();
+        for (Example each : ex) {
+
+            boolean guess = sgn(weights, each);
+            boolean actual = toBool(each.get(0));
+
+            if (guess == actual)
+                continue;
+            else
+                failed++;
+        }
+
+        return (long) failed / (long) total;
     }
 
     private static ArrayList<Double> simplePerceptronEpochs(int epochs, ArrayList<Example> examples, double learnRate) {
@@ -102,8 +145,6 @@ public class Main {
 
             if (sign == actual)
                 continue;
-
-            //TODO: Change on error
 
             if (actual) {
                 for (int i = 1; i < 20; i++) {

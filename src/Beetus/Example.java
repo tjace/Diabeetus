@@ -3,12 +3,17 @@ package Beetus;
 import java.util.ArrayList;
 import java.util.Collections;
 
-public class Example {
+/**
+ * an Example's features array contains:
+ * features[0]:         -1.0 or 1.0, corresponding with the label
+ * features [1 - 19]:   a double, corresponding to the fields 1 - 19.  1 is the lowest field, and 19 is the highest.
+ */
+class Example {
 
-    boolean label;
-    ArrayList<Double> features;
+    private boolean label;
+    private ArrayList<Double> features;
 
-    public Example(String fullLine) throws Exception {
+    Example(String fullLine) throws Exception {
         String[] pieces = fullLine.split(" ");
         features = new ArrayList<Double>(Collections.nCopies(20, 0.0));
 
@@ -33,7 +38,6 @@ public class Example {
                 }
             } else {
                 String[] splits = each.split(":");
-                System.out.println("Parsing " + splits[0] + ", " + splits[1]);
                 features.add(Integer.parseInt(splits[0]), Double.parseDouble(splits[1]));
             }
 
@@ -42,13 +46,10 @@ public class Example {
 
     }
 
-    public Example(boolean _label, ArrayList<Double> _features) {
-        label = _label;
-        features = _features;
-    }
-
-    public Double get(int n)
+    Double get(int n)
     {
         return features.get(n);
     }
 }
+
+

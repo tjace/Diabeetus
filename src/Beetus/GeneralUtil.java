@@ -15,8 +15,8 @@ class GeneralUtil {
      * the weights
      * an example
      *
-     * @param weights
-     * @param ex
+     * @param weights the weights to guess with
+     * @param ex the example to be guessed
      * @return true if (exampleFeatures * weights) + b >= 0, else false
      */
     static boolean sgn(ArrayList<Double> weights, Example ex) {
@@ -44,16 +44,14 @@ class GeneralUtil {
             if (guess != actual)
                 failed++;
         }
-        double percentFailed = failed / total;
         return failed / total;
     }
 
     /**
      * Returns an ArrayList full of the examples from all given files
      *
-     * @param files
-     * @return
-     * @throws Exception
+     * @param files the files to read for the Examples
+     * @return an ArrayList full of the examples from all given files
      */
     static ArrayList<Example> readExamples(String[] files) throws Exception {
         ArrayList<Example> ret = new ArrayList<>();
@@ -71,13 +69,12 @@ class GeneralUtil {
      *
      * @param fileName where the Example lines are read from
      * @return an ArrayList of read examples
-     * @throws Exception
      */
     static ArrayList<Example> readExamples(String fileName) throws Exception {
         ArrayList<Example> ret = new ArrayList<>();
 
         BufferedReader reader = null;
-        String line = "";
+        String line;
 
 
         try {

@@ -18,7 +18,7 @@ class SimpleUtil {
     }
 
 
-    static ArrayList<Double> simplePerceptronEpochs(int epochs, ArrayList<Example> examples, ArrayList<Double> weights, double learnRate) {
+    private static ArrayList<Double> simplePerceptronEpochs(int epochs, ArrayList<Example> examples, ArrayList<Double> weights, double learnRate) {
 
         for (int i = 0; i < epochs; i++) {
             Collections.shuffle(examples);
@@ -32,23 +32,10 @@ class SimpleUtil {
 
     /**
      * Runs Perceptron Simple. Returns ideal weights. First element of weights is b.
-     * With no weights given as input, begins with randomized weights between 0.01 and -0.01
-     *
-     * @param examples A list of Examples to run on.
-     * @return trained weights.
-     */
-    static ArrayList<Double> simplePerceptron(ArrayList<Example> examples, double learnRate) {
-        ArrayList<Double> blankWeights = new ArrayList<Double>(Collections.nCopies(20, 0.0));
-
-        return simplePerceptron(examples, blankWeights, learnRate);
-    }
-
-    /**
-     * Runs Perceptron Simple. Returns ideal weights. First element of weights is b.
      *
      * @param examples A list of Examples to run on.
      */
-    static ArrayList<Double> simplePerceptron(ArrayList<Example> examples, ArrayList<Double> weights, double learnRate) {
+    static void simplePerceptron(ArrayList<Example> examples, ArrayList<Double> weights, double learnRate) {
 
         for (Example ex : examples) {
             boolean sign = GeneralUtil.sgn(weights, ex);
@@ -66,8 +53,6 @@ class SimpleUtil {
                 weights.set(0, weights.get(0) + (y * learnRate));
             }
         }
-
-        return weights;
     }
 
 

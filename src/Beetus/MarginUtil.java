@@ -63,8 +63,7 @@ class MarginUtil {
                 }
             }
         }
-        double[] ret = new double[]{bestRate, bestMargin};
-        return ret;
+        return new double[]{bestRate, bestMargin};
     }
 
     /**
@@ -99,10 +98,8 @@ class MarginUtil {
         return weights;
     }
 
-    private static ArrayList<Double> marginPerceptron(ArrayList<Example> examples, ArrayList<Double> weights,
+    private static void marginPerceptron(ArrayList<Example> examples, ArrayList<Double> weights,
                                                       double decayedRate, double margin) {
-        //TODO: Margins???
-
         for (Example ex : examples) {
             boolean update = underMargin(weights, ex, margin);
 
@@ -118,8 +115,6 @@ class MarginUtil {
                 weights.set(0, weights.get(0) + (y * decayedRate));
             }
         }
-
-        return weights;
     }
 
     private static boolean underMargin(ArrayList<Double> weights, Example ex, double margin) {

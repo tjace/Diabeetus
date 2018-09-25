@@ -13,16 +13,51 @@ import java.util.concurrent.ThreadLocalRandom;
 public class Main {
 
     static double[] rates = new double[]{1.0, 0.1, 0.01};
-    static String[] crosses = new String[]{"training00.data", "training01.data", "training02.data", "training03.data", "training04.data"}
+    static String[] crosses = new String[]{
+            "training00.data", "training01.data", "training02.data", "training03.data", "training04.data"};
+
     static ArrayList<Example> examples = new ArrayList<>();
 
-    public static void main(String[] args) throws Exception {
 
+    public static void main(String[] args) throws Exception {
         examples = readExamples("src/diabetes.train");
+
+        //Cross-Validate for best hyper-parameter
+        double bestRate = crossValidateRates(rates, crosses);
 
         for (double learnRate : rates) {
             ArrayList<Double> weights = simplePerceptronEpochs(10, examples, learnRate);
         }
+    }
+
+    private static double crossValidateRates(double[] rates, String[] crosses) throws Exception {
+        double bestRate = 0;
+        double bestError = 0;
+
+        for (int r = 0; r < rates.length; r++) {
+            for (int i = 0; i < crosses.length; i++) {
+
+                //Use all of the files but one
+                String[] usedFiles = new String[crosses.length - 1];
+                int found = 0;
+                for (int j; j < crosses.length; j++) {
+                    if (j == i) {
+                        found = 1;
+                        continue;
+                    }
+                    usedFiles[j - found] = crosses[j - found];
+                }
+
+                //Read the examples from the chosen files
+                ArrayList<Example> ex = readExamples(usedFiles);
+
+                //
+                ArrayList<Double> weights = new ArrayList<>();
+                    weights = simplePerceptronEpochs(10, ex, rates[r]);
+
+            }
+        }
+
     }
 
     private static ArrayList<Double> simplePerceptronEpochs(int epochs, ArrayList<Example> examples, double learnRate) {
@@ -112,11 +147,21 @@ public class Main {
         return sum >= 0;
     }
 
-
+    /**
+     * Returns an ArrayList full of the examples from all given files
+     *
+     * @param files
+     * @return
+     * @throws Exception
+     */
     private static ArrayList<Example> readExamples(String[] files) throws Exception {
+        ArrayList<Example> ret = new ArrayList<>();
 
+        for (String file : files) {
+            ret.addAll(readExamples(file));
+        }
 
-
+        return ret;
     }
 
     /**

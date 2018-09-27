@@ -14,6 +14,7 @@ public class Main {
         simple();
         decay();
         margin();
+        average();
     }
 
     /**
@@ -36,8 +37,6 @@ public class Main {
 
         System.out.println("Error for Simple Perceptron is " + simpleError);
         System.out.println("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n\n");
-
-
     }
 
     /**
@@ -88,6 +87,28 @@ public class Main {
         double marginError = GeneralUtil.testError(marginWeights, "src/diabetes.test");
 
         System.out.println("Error for Margin Perceptron is " + marginError);
+        System.out.println("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n\n");
+    }
+
+    /**
+     * Runs all of the tests that are required to test the Averaged version of Perceptron.
+     */
+    private static void average() throws Exception {
+        ArrayList<Example> examples = GeneralUtil.readExamples("src/diabetes.train");
+
+        //Cross-Validate for best hyper-parameter
+        //10 epochs per cross-validation check per rate.
+        double bestRate = AverageUtil.crossValidateRates(rates, crosses);
+
+        System.out.println("The best Average learnRate was found to be " + bestRate);
+
+        //With best rate, train a new weightset on the .train file 20x
+        ArrayList<Double> averageWeights = AverageUtil.averagePerceptronEpochs(20, examples, bestRate);
+
+        //then test error on the .test file.
+        double averageError = GeneralUtil.testError(averageWeights, "src/diabetes.test");
+
+        System.out.println("Error for Average Perceptron is " + averageError);
         System.out.println("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n\n");
     }
 }

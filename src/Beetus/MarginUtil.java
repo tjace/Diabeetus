@@ -45,7 +45,7 @@ class MarginUtil {
                     ArrayList<Example> ex = GeneralUtil.readExamples(usedFiles);
 
                     //Using the rate for this run, epoch 10x over the targets
-                    ArrayList<Double> weights = marginPerceptronEpochs(10, ex, rate, margin);
+                    ArrayList<Double> weights = marginPerceptronEpochs(10, ex, rate, margin, false);
 
                     //Test the weights on the unused cross file
                     double thisError = GeneralUtil.testError(weights, testFile);
@@ -73,10 +73,10 @@ class MarginUtil {
      * @return weights trained by running Decaying Perceptron a number of times
      */
     static ArrayList<Double> marginPerceptronEpochs(int epochs, ArrayList<Example> examples,
-                                                    double learnRate, double margin) {
+                                                    double learnRate, double margin, boolean isTrain) throws Exception {
         ArrayList<Double> weights = GeneralUtil.smallRandoms(20);
 
-        return marginPerceptronEpochs(epochs, examples, weights, learnRate, margin);
+        return marginPerceptronEpochs(epochs, examples, weights, learnRate, margin, isTrain);
     }
 
     /**
@@ -86,24 +86,41 @@ class MarginUtil {
      * @return weights trained by running Decaying Perceptron a number of times
      */
     private static ArrayList<Double> marginPerceptronEpochs(int epochs, ArrayList<Example> examples,
-                                                            ArrayList<Double> weights, double learnRate, double margin) {
+                                                            ArrayList<Double> weights, double learnRate,
+                                                            double margin, boolean isTrain) throws Exception {
+        int totalUpdates = 0;
+        if (isTrain)
+            System.out.println("************");
+
         for (int i = 0; i < epochs; i++) {
             Collections.shuffle(examples);
             double decayedRate = learnRate / (1 + i);
 
             //No need to reassign to weights,
             // since it is changed within the method.
-            marginPerceptron(examples, weights, decayedRate, margin);
+            totalUpdates += marginPerceptron(examples, weights, decayedRate, margin);
+
+            if (isTrain)
+                GeneralUtil.testVsDev(i + 1, weights);
         }
+
+        if (isTrain) {
+            System.out.println("************");
+            System.out.println("Updates for this set of Margin epochs: " + totalUpdates);
+        }
+
         return weights;
     }
 
-    private static void marginPerceptron(ArrayList<Example> examples, ArrayList<Double> weights,
-                                                      double decayedRate, double margin) {
+    private static int marginPerceptron(ArrayList<Example> examples, ArrayList<Double> weights,
+                                        double decayedRate, double margin) {
+        int updates = 0;
+
         for (Example ex : examples) {
             boolean update = underMargin(weights, ex, margin);
 
             if (update) {
+                updates++;
                 double y = ex.get(0);
 
                 //Update each weight
@@ -115,6 +132,8 @@ class MarginUtil {
                 weights.set(0, weights.get(0) + (y * decayedRate));
             }
         }
+
+        return updates;
     }
 
     private static boolean underMargin(ArrayList<Double> weights, Example ex, double margin) {

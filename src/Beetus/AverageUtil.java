@@ -44,7 +44,7 @@ class AverageUtil {
                 ArrayList<Example> ex = GeneralUtil.readExamples(usedFiles);
 
                 //Using the rate for this run, epoch 10x over the targets
-                ArrayList<Double> weights = averagePerceptronEpochs(10, ex, rate);
+                ArrayList<Double> weights = averagePerceptronEpochs(10, ex, rate, false);
 
                 //Test the weights on the unused cross file
                 double thisError = GeneralUtil.testError(weights, testFile);
@@ -71,27 +71,38 @@ class AverageUtil {
      *
      * @return weights trained by running Simple Perceptron a number of times
      */
-    static ArrayList<Double> averagePerceptronEpochs(int epochs, ArrayList<Example> examples, double learnRate) {
+    static ArrayList<Double> averagePerceptronEpochs(int epochs, ArrayList<Example> examples, double learnRate, boolean isTrain) throws Exception {
         ArrayList<Double> weights = GeneralUtil.smallRandoms(20);
 
-        return averagePerceptronEpochs(epochs, examples, weights, learnRate);
+        return averagePerceptronEpochs(epochs, examples, weights, learnRate, isTrain);
     }
 
-    private static ArrayList<Double> averagePerceptronEpochs(int epochs, ArrayList<Example> examples, ArrayList<Double> weights, double learnRate) {
+    private static ArrayList<Double> averagePerceptronEpochs(int epochs, ArrayList<Example> examples, ArrayList<Double> weights, double learnRate, boolean isTrain) throws Exception {
 
         ArrayList<Double> avgWeights = new ArrayList<>(weights);
+        int totalUpdates = 0;
+
+        if (isTrain)
+            System.out.println("************");
 
         for (int i = 0; i < epochs; i++) {
             Collections.shuffle(examples);
 
             //No need to reassign to weights,
             // since it is changed within the method.
-            SimpleUtil.simplePerceptron(examples, weights, learnRate);
+            totalUpdates += SimpleUtil.simplePerceptron(examples, weights, learnRate);
 
             //After each epoch, add the current values for weights into the avg.
-            for(int j = 0; j < weights.size(); j++)
+            for (int j = 0; j < weights.size(); j++)
                 avgWeights.set(j, avgWeights.get(j) + weights.get(j));
 
+            if (isTrain)
+                GeneralUtil.testVsDev(i + 1, weights);
+        }
+
+        if (isTrain) {
+            System.out.println("************");
+            System.out.println("Updates for this set of Average epochs: " + totalUpdates);
         }
         return avgWeights;
     }

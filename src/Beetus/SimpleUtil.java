@@ -11,21 +11,34 @@ class SimpleUtil {
      *
      * @return weights trained by running Simple Perceptron a number of times
      */
-    static ArrayList<Double> simplePerceptronEpochs(int epochs, ArrayList<Example> examples, double learnRate) {
+    static ArrayList<Double> simplePerceptronEpochs(int epochs, ArrayList<Example> examples, double learnRate, boolean isTrain) throws Exception {
         ArrayList<Double> weights = GeneralUtil.smallRandoms(20);
 
-        return simplePerceptronEpochs(epochs, examples, weights, learnRate);
+
+        return simplePerceptronEpochs(epochs, examples, weights, learnRate, isTrain);
     }
 
 
-    private static ArrayList<Double> simplePerceptronEpochs(int epochs, ArrayList<Example> examples, ArrayList<Double> weights, double learnRate) {
+    private static ArrayList<Double> simplePerceptronEpochs(int epochs, ArrayList<Example> examples, ArrayList<Double> weights, double learnRate, boolean isTrain) throws Exception {
+        int totalUpdates = 0;
+
+        if (isTrain)
+            System.out.println("************");
 
         for (int i = 0; i < epochs; i++) {
             Collections.shuffle(examples);
 
             //No need to reassign to weights,
             // since it is changed within the method.
-            simplePerceptron(examples, weights, learnRate);
+            totalUpdates += simplePerceptron(examples, weights, learnRate);
+
+            if (isTrain)
+                GeneralUtil.testVsDev(i + 1, weights);
+        }
+
+        if (isTrain) {
+            System.out.println("************");
+            System.out.println("Updates for this set of Simple epochs: " + totalUpdates);
         }
         return weights;
     }
@@ -34,14 +47,17 @@ class SimpleUtil {
      * Runs Perceptron Simple. Returns ideal weights. First element of weights is b.
      *
      * @param examples A list of Examples to run on.
+     * @return the number of updates that happened in this epoch.
      */
-    static void simplePerceptron(ArrayList<Example> examples, ArrayList<Double> weights, double learnRate) {
+    static int simplePerceptron(ArrayList<Example> examples, ArrayList<Double> weights, double learnRate) {
+        int updates = 0;
 
         for (Example ex : examples) {
             boolean sign = GeneralUtil.sgn(weights, ex);
             boolean actual = GeneralUtil.toBool(ex.get(0));
 
             if (sign != actual) {
+                updates++;
                 double y = ex.get(0);
 
                 //Update each weight
@@ -53,6 +69,8 @@ class SimpleUtil {
                 weights.set(0, weights.get(0) + (y * learnRate));
             }
         }
+
+        return updates;
     }
 
 
@@ -94,7 +112,7 @@ class SimpleUtil {
                 ArrayList<Example> ex = GeneralUtil.readExamples(usedFiles);
 
                 //Using the rate for this run, epoch 10x over the targets
-                ArrayList<Double> weights = simplePerceptronEpochs(10, ex, rate);
+                ArrayList<Double> weights = simplePerceptronEpochs(10, ex, rate, false);
 
                 //Test the weights on the unused cross file
                 double thisError = GeneralUtil.testError(weights, testFile);

@@ -125,4 +125,17 @@ class GeneralUtil {
             return false;
         }
     }
+
+    static void testVsDev(int epochNum, ArrayList<Double> weights) throws Exception {
+        StringBuilder out = new StringBuilder("Epoch ");
+        out.append(epochNum);
+
+        if (epochNum < 10)
+            out.append(" ");
+
+        out.append(": ");
+        out.append(GeneralUtil.testError(weights, "src/diabetes.dev"));
+
+        System.out.println(out);
+    }
 }

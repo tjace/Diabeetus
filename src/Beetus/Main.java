@@ -30,7 +30,7 @@ public class Main {
         System.out.println("The best Simple learnRate was found to be " + bestRate);
 
         //With best rate, train a new weightset on the .train file 20x
-        ArrayList<Double> simpleWeights = SimpleUtil.simplePerceptronEpochs(20, examples, bestRate);
+        ArrayList<Double> simpleWeights = SimpleUtil.simplePerceptronEpochs(20, examples, bestRate, true);
 
         //then test error on the .test file.
         double simpleError = GeneralUtil.testError(simpleWeights, "src/diabetes.test");
@@ -53,7 +53,7 @@ public class Main {
         System.out.println("The best Decaying learnRate was found to be " + bestRate);
 
         //With best rate, train a new weightset on the .train file 20x
-        ArrayList<Double> decayWeights = DecayUtil.decayPerceptronEpochs(20, examples, bestRate);
+        ArrayList<Double> decayWeights = DecayUtil.decayPerceptronEpochs(20, examples, bestRate, true);
 
         //then test error on the .test file.
         double marginError = GeneralUtil.testError(decayWeights, "src/diabetes.test");
@@ -81,7 +81,7 @@ public class Main {
         System.out.println("Best Margin is: " + bestMargin);
 
         //With best rate, train a new weightset on the .train file 20x
-        ArrayList<Double> marginWeights = MarginUtil.marginPerceptronEpochs(20, examples, bestRate, bestMargin);
+        ArrayList<Double> marginWeights = MarginUtil.marginPerceptronEpochs(20, examples, bestRate, bestMargin, true);
 
         //then test error on the .test file.
         double marginError = GeneralUtil.testError(marginWeights, "src/diabetes.test");
@@ -103,7 +103,7 @@ public class Main {
         System.out.println("The best Average learnRate was found to be " + bestRate);
 
         //With best rate, train a new weightset on the .train file 20x
-        ArrayList<Double> averageWeights = AverageUtil.averagePerceptronEpochs(20, examples, bestRate);
+        ArrayList<Double> averageWeights = AverageUtil.averagePerceptronEpochs(20, examples, bestRate, true);
 
         //then test error on the .test file.
         double averageError = GeneralUtil.testError(averageWeights, "src/diabetes.test");

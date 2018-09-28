@@ -53,7 +53,7 @@ class AverageUtil {
 
             error = errorSum / crosses.length;
 
-            System.out.println("Rate " + rate + " has error: " + error);
+            System.out.println("Rate " + rate + " has accuracy: " + (1.0 - error));
 
             if (error < minError || minError == -1.0) {
                 minError = error;

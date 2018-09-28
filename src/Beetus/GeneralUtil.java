@@ -134,7 +134,7 @@ class GeneralUtil {
             out.append(" ");
 
         out.append(": ");
-        out.append(GeneralUtil.testError(weights, "src/diabetes.dev"));
+        out.append(1.0 - GeneralUtil.testError(weights, "src/diabetes.dev"));
 
         System.out.println(out);
     }

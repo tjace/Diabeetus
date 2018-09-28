@@ -54,7 +54,7 @@ class MarginUtil {
 
                 error = errorSum / crosses.length;
 
-                System.out.println("Starting rate " + rate + " + margin " + margin + " has error: " + error);
+                System.out.println("Starting rate " + rate + " + margin " + margin + " has accuracy: " + (1.0 - error));
 
                 if (error < minError || minError == -1.0) {
                     minError = error;

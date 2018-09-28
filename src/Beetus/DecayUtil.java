@@ -52,7 +52,7 @@ class DecayUtil {
 
             error = errorSum / crosses.length;
 
-            System.out.println("Starting rate " + rate + " has error: " + error);
+            System.out.println("Starting rate " + rate + " has accuracy: " + (1.0 - error));
 
             if (error < minError || minError == -1.0) {
                 minError = error;

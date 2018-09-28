@@ -33,9 +33,9 @@ public class Main {
         ArrayList<Double> simpleWeights = SimpleUtil.simplePerceptronEpochs(20, examples, bestRate, true);
 
         //then test error on the .test file.
-        double simpleError = GeneralUtil.testError(simpleWeights, "src/diabetes.test");
+        double simpleAccuracy = 1.0 - GeneralUtil.testError(simpleWeights, "src/diabetes.test");
 
-        System.out.println("Error for Simple Perceptron is " + simpleError);
+        System.out.println("Accuracy for Simple Perceptron is " + simpleAccuracy);
         System.out.println("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n\n");
     }
 
@@ -56,9 +56,9 @@ public class Main {
         ArrayList<Double> decayWeights = DecayUtil.decayPerceptronEpochs(20, examples, bestRate, true);
 
         //then test error on the .test file.
-        double marginError = GeneralUtil.testError(decayWeights, "src/diabetes.test");
+        double marginAccuracy = 1.0 - GeneralUtil.testError(decayWeights, "src/diabetes.test");
 
-        System.out.println("Error for Decaying Perceptron is " + marginError);
+        System.out.println("Accuracy for Decaying Perceptron is " + marginAccuracy);
         System.out.println("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n\n");
     }
 
@@ -84,9 +84,9 @@ public class Main {
         ArrayList<Double> marginWeights = MarginUtil.marginPerceptronEpochs(20, examples, bestRate, bestMargin, true);
 
         //then test error on the .test file.
-        double marginError = GeneralUtil.testError(marginWeights, "src/diabetes.test");
+        double marginAccuracy = 1.0 - GeneralUtil.testError(marginWeights, "src/diabetes.test");
 
-        System.out.println("Error for Margin Perceptron is " + marginError);
+        System.out.println("Accuracy for Margin Perceptron is " + marginAccuracy);
         System.out.println("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n\n");
     }
 
@@ -106,9 +106,9 @@ public class Main {
         ArrayList<Double> averageWeights = AverageUtil.averagePerceptronEpochs(20, examples, bestRate, true);
 
         //then test error on the .test file.
-        double averageError = GeneralUtil.testError(averageWeights, "src/diabetes.test");
+        double averageAccuracy = 1.0 - GeneralUtil.testError(averageWeights, "src/diabetes.test");
 
-        System.out.println("Error for Average Perceptron is " + averageError);
+        System.out.println("Accuracy for Average Perceptron is " + averageAccuracy);
         System.out.println("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n\n");
     }
 }

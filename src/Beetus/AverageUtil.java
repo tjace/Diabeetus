@@ -78,7 +78,9 @@ class AverageUtil {
         return averagePerceptronEpochs(epochs, examples, weights, learnRate, isTrain);
     }
 
-    private static ArrayList<Double> averagePerceptronEpochs(int epochs, ArrayList<Example> examples, Weight weights, double learnRate, boolean isTrain) throws Exception {
+    private static Weight averagePerceptronEpochs(
+            int epochs, ArrayList<Example> examples, Weight weights, double learnRate, boolean isTrain)
+            throws Exception {
 
         //ArrayList<Double> avgWeights = new ArrayList<>(weights);
         Weight avgWeights = weights.copy();
@@ -96,8 +98,9 @@ class AverageUtil {
             totalUpdates += SimpleUtil.simplePerceptron(examples, weights, learnRate);
 
             //After each epoch, add the current values for weights into the avg.
-            for (int j = 0; j < weights.size(); j++)
-                avgWeights.set(j, avgWeights.get(j) + weights.get(j));
+            for (String key : weights.getAllKeys())
+                //avgWeights.set(j, avgWeights.get(j) + weights.get(j));
+                avgWeights.add(key, weights.get(key)); //If avg doesn't have a key, creates one
 
             if (isTrain)
                 GeneralUtil.testVsDev(i + 1, weights);

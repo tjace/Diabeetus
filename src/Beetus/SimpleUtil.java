@@ -46,7 +46,7 @@ class SimpleUtil {
     }
 
     /**
-     * Runs Perceptron Simple. Returns ideal weights. First element of weights is b.
+     * Runs Perceptron Simple. Updates weights.
      *
      * @param examples A list of Examples to run on.
      * @return the number of updates that happened in this epoch.
@@ -69,7 +69,7 @@ class SimpleUtil {
 
 
                 //Update each weight
-                //w <- w + (atualSign * learnRate * featureValue)
+                //w <- w + (actualSign * learnRate * featureValue)
                 for (String key : ex.getAllKeys()) {
                     //weights.set(i, weights.get(i) + (y * learnRate * ex.get(i)));
                     double newWeight = weights.get(key) + (y * learnRate * ex.get(key));

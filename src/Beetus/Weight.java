@@ -14,7 +14,9 @@ public class Weight {
         b = ThreadLocalRandom.current().nextDouble(0.0, 0.01);
     }
 
-    Double get(String key) {
+    double get(String key) {
+        if (!this.hasKey(key))
+            this.put(key, ThreadLocalRandom.current().nextDouble(0.0, 0.01));
         return weights.get(key);
     }
 
@@ -50,6 +52,14 @@ public class Weight {
         }
 
         return ret;
+    }
+
+    void add(String key, double value)
+    {
+        if(!this.hasKey(key))
+            this.put(key, value);
+        else
+            this.put(key, this.get(key) + value);
     }
 
 }

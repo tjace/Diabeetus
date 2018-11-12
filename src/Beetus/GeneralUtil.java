@@ -5,6 +5,7 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.concurrent.ThreadLocalRandom;
 
 class GeneralUtil {
@@ -16,22 +17,26 @@ class GeneralUtil {
      * an example
      *
      * @param weights the weights to guess with
-     * @param ex the example to be guessed
+     * @param ex      the example to be guessed
      * @return true if (exampleFeatures * weights) + b >= 0, else false
      */
-    static boolean sgn(ArrayList<Double> weights, Example ex) {
+    static boolean sgn(Weight weights, Example ex) {
         double sum = 0;
 
-        for (int i = 1; i < 20; i++) {
-            sum += (weights.get(i) * ex.get(i));
+        for (String key : ex.getAllKeys()) {
+            if (!(weights.hasKey(key)))
+                weights.put(key, smallRandom());
+
+            sum += (weights.get(key) * ex.get(key));
+            //else skip this key
         }
 
-        sum += weights.get(0);
+        sum += weights.getB(); //Don't forget to add b (for bonus lol)
 
         return sum >= 0;
     }
 
-    static double testError(ArrayList<Double> weights, String testFile) throws Exception {
+    static double testError(Weight weights, String testFile) throws Exception {
         ArrayList<Example> ex = readExamples(testFile);
 
         double failed = 0;
@@ -39,7 +44,7 @@ class GeneralUtil {
         for (Example each : ex) {
 
             boolean guess = sgn(weights, each);
-            boolean actual = toBool(each.get(0));
+            boolean actual = each.getLabel();
 
             if (guess != actual)
                 failed++;
@@ -105,7 +110,8 @@ class GeneralUtil {
         return ret;
     }
 
-    static ArrayList<Double> smallRandoms(int n) {
+    /*
+    static HashMap<String, Double> smallRandoms(ArrayList<Example> examples) {
         ArrayList<Double> nums = new ArrayList<>(n);
 
         for (int i = 0; i < n; i++) {
@@ -113,6 +119,11 @@ class GeneralUtil {
         }
 
         return nums;
+    }
+     */
+
+    static Double smallRandom() {
+        return ThreadLocalRandom.current().nextDouble(0.0, 0.01);
     }
 
     static boolean toBool(Double dub) {
@@ -126,7 +137,7 @@ class GeneralUtil {
         }
     }
 
-    static void testVsDev(int epochNum, ArrayList<Double> weights) throws Exception {
+    static void testVsDev(int epochNum, Weight weights) throws Exception {
         StringBuilder out = new StringBuilder("Epoch ");
         out.append(epochNum);
 

@@ -1,6 +1,7 @@
 package Beetus;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class Main {
 
@@ -30,7 +31,7 @@ public class Main {
         System.out.println("The best Simple learnRate was found to be " + bestRate);
 
         //With best rate, train a new weightset on the .train file 20x
-        ArrayList<Double> simpleWeights = SimpleUtil.simplePerceptronEpochs(20, examples, bestRate, true);
+        Weight simpleWeights = SimpleUtil.simplePerceptronEpochs(20, examples, bestRate, true);
 
         //then test error on the .test file.
         double simpleAccuracy = 1.0 - GeneralUtil.testError(simpleWeights, "src/diabetes.test");
@@ -41,7 +42,7 @@ public class Main {
 
     /**
      * Runs all of the tests that are needed for testing a version of Perceptron that implements a decaying learning rate.
-     *  - Rate decays with each epoch.
+     * - Rate decays with each epoch.
      */
     private static void decay() throws Exception {
         ArrayList<Example> examples = GeneralUtil.readExamples("src/diabetes.train");
@@ -53,7 +54,7 @@ public class Main {
         System.out.println("The best Decaying learnRate was found to be " + bestRate);
 
         //With best rate, train a new weightset on the .train file 20x
-        ArrayList<Double> decayWeights = DecayUtil.decayPerceptronEpochs(20, examples, bestRate, true);
+        Weight decayWeights = DecayUtil.decayPerceptronEpochs(20, examples, bestRate, true);
 
         //then test error on the .test file.
         double marginAccuracy = 1.0 - GeneralUtil.testError(decayWeights, "src/diabetes.test");
@@ -64,9 +65,8 @@ public class Main {
 
     /**
      * Runs all of the tests that are needed for testing a version of Perceptron that implements a learning margin rate.
-     *  - Rate decays with each epoch.
-     *  - Weights update even when guess is correct, if within margin
-     *
+     * - Rate decays with each epoch.
+     * - Weights update even when guess is correct, if within margin
      */
     private static void margin() throws Exception {
         ArrayList<Example> examples = GeneralUtil.readExamples("src/diabetes.train");
@@ -81,7 +81,7 @@ public class Main {
         System.out.println("Best Margin is: " + bestMargin);
 
         //With best rate, train a new weightset on the .train file 20x
-        ArrayList<Double> marginWeights = MarginUtil.marginPerceptronEpochs(20, examples, bestRate, bestMargin, true);
+        Weight marginWeights = MarginUtil.marginPerceptronEpochs(20, examples, bestRate, bestMargin, true);
 
         //then test error on the .test file.
         double marginAccuracy = 1.0 - GeneralUtil.testError(marginWeights, "src/diabetes.test");
@@ -103,7 +103,7 @@ public class Main {
         System.out.println("The best Average learnRate was found to be " + bestRate);
 
         //With best rate, train a new weightset on the .train file 20x
-        ArrayList<Double> averageWeights = AverageUtil.averagePerceptronEpochs(20, examples, bestRate, true);
+        Weight averageWeights = AverageUtil.averagePerceptronEpochs(20, examples, bestRate, true);
 
         //then test error on the .test file.
         double averageAccuracy = 1.0 - GeneralUtil.testError(averageWeights, "src/diabetes.test");

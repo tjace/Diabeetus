@@ -2,6 +2,7 @@ package Beetus;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 
 class SimpleUtil {
 
@@ -11,15 +12,16 @@ class SimpleUtil {
      *
      * @return weights trained by running Simple Perceptron a number of times
      */
-    static ArrayList<Double> simplePerceptronEpochs(int epochs, ArrayList<Example> examples, double learnRate, boolean isTrain) throws Exception {
-        ArrayList<Double> weights = GeneralUtil.smallRandoms(20);
-
+    static Weight simplePerceptronEpochs(int epochs, ArrayList<Example> examples, double learnRate, boolean isTrain) throws Exception {
+        //HashMap<String, Double> weights = GeneralUtil.smallRandoms(examples);
+        //HashMap<String, Double> weights = new HashMap<>();
+        Weight weights = new Weight();
 
         return simplePerceptronEpochs(epochs, examples, weights, learnRate, isTrain);
     }
 
 
-    private static ArrayList<Double> simplePerceptronEpochs(int epochs, ArrayList<Example> examples, ArrayList<Double> weights, double learnRate, boolean isTrain) throws Exception {
+    private static Weight simplePerceptronEpochs(int epochs, ArrayList<Example> examples, Weight weights, double learnRate, boolean isTrain) throws Exception {
         int totalUpdates = 0;
 
         if (isTrain)
@@ -49,24 +51,34 @@ class SimpleUtil {
      * @param examples A list of Examples to run on.
      * @return the number of updates that happened in this epoch.
      */
-    static int simplePerceptron(ArrayList<Example> examples, ArrayList<Double> weights, double learnRate) {
+    static int simplePerceptron(ArrayList<Example> examples, Weight weights, double learnRate) {
         int updates = 0;
 
         for (Example ex : examples) {
             boolean sign = GeneralUtil.sgn(weights, ex);
-            boolean actual = GeneralUtil.toBool(ex.get(0));
+            boolean actual = ex.getLabel();
 
             if (sign != actual) {
                 updates++;
-                double y = ex.get(0);
+
+                double y; //+1 if label is actually +, -1 if label is actually -
+                if (ex.getLabel())
+                    y = 1.0;
+                else
+                    y = -1.0;
+
 
                 //Update each weight
                 //w <- w + (atualSign * learnRate * featureValue)
-                for (int i = 1; i < 20; i++) {
-                    weights.set(i, weights.get(i) + (y * learnRate * ex.get(i)));
+                for (String key : ex.getAllKeys()) {
+                    //weights.set(i, weights.get(i) + (y * learnRate * ex.get(i)));
+                    double newWeight = weights.get(key) + (y * learnRate * ex.get(key));
+                    weights.put(key, newWeight);
                 }
                 //b <- b + (actualSign * learnRate)
-                weights.set(0, weights.get(0) + (y * learnRate));
+                //weights.set(0, weights.get(0) + (y * learnRate));
+                double newB = weights.getB() + (y * learnRate);
+                weights.setB(newB);
             }
         }
 
@@ -108,11 +120,11 @@ class SimpleUtil {
                     usedFiles[j - found] = crosses[j];
                 }
 
-                //Read the examples from the chosen files
+                //Read the examples from the chosen files,,,
                 ArrayList<Example> ex = GeneralUtil.readExamples(usedFiles);
 
                 //Using the rate for this run, epoch 10x over the targets
-                ArrayList<Double> weights = simplePerceptronEpochs(10, ex, rate, false);
+                Weight weights = simplePerceptronEpochs(10, ex, rate, false);
 
                 //Test the weights on the unused cross file
                 double thisError = GeneralUtil.testError(weights, testFile);

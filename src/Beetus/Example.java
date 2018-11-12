@@ -2,6 +2,8 @@ package Beetus;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.Set;
 
 /**
  * an Example's features array contains:
@@ -11,39 +13,45 @@ import java.util.Collections;
 class Example {
 
     private boolean label;
-    private ArrayList<Double> features;
+    private HashMap<String, Double> features;
 
     Example(String fullLine) throws Exception {
         String[] pieces = fullLine.split(" ");
-        features = new ArrayList<>(Collections.nCopies(20, 0.0));
+        features = new HashMap<>();
 
         for (String each : pieces) {
             if (!Character.isDigit(each.charAt(0))) {
                 switch (pieces[0]) {
                     case "-1":
                         label = false;
-                        features.add(0, -1.0);
                         break;
                     case "+1":
                         label = true;
-                        features.add(0, 1.0);
                         break;
                     default:
                         throw new Exception("bad first line :(");
                 }
             } else {
                 String[] splits = each.split(":");
-                features.add(Integer.parseInt(splits[0]), Double.parseDouble(splits[1]));
+                features.put(splits[0], Double.parseDouble(splits[1]));
             }
-
         }
-
-
     }
 
-    Double get(int n)
-    {
+    Double get(String n) {
         return features.get(n);
+    }
+
+    boolean getLabel() {
+        return label;
+    }
+
+    boolean hasKey(String key) {
+        return features.containsKey(key);
+    }
+
+    Set<String> getAllKeys()  {
+        return features.keySet();
     }
 }
 

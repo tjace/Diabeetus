@@ -44,7 +44,7 @@ class AverageUtil {
                 ArrayList<Example> ex = GeneralUtil.readExamples(usedFiles);
 
                 //Using the rate for this run, epoch 10x over the targets
-                ArrayList<Double> weights = averagePerceptronEpochs(10, ex, rate, false);
+                Weight weights = averagePerceptronEpochs(10, ex, rate, false);
 
                 //Test the weights on the unused cross file
                 double thisError = GeneralUtil.testError(weights, testFile);
@@ -71,15 +71,18 @@ class AverageUtil {
      *
      * @return weights trained by running Simple Perceptron a number of times
      */
-    static ArrayList<Double> averagePerceptronEpochs(int epochs, ArrayList<Example> examples, double learnRate, boolean isTrain) throws Exception {
-        ArrayList<Double> weights = GeneralUtil.smallRandoms(20);
+    static Weight averagePerceptronEpochs(int epochs, ArrayList<Example> examples, double learnRate, boolean isTrain) throws Exception {
+        //ArrayList<Double> weights = GeneralUtil.smallRandoms(20);
+        Weight weights = new Weight();
 
         return averagePerceptronEpochs(epochs, examples, weights, learnRate, isTrain);
     }
 
-    private static ArrayList<Double> averagePerceptronEpochs(int epochs, ArrayList<Example> examples, ArrayList<Double> weights, double learnRate, boolean isTrain) throws Exception {
+    private static ArrayList<Double> averagePerceptronEpochs(int epochs, ArrayList<Example> examples, Weight weights, double learnRate, boolean isTrain) throws Exception {
 
-        ArrayList<Double> avgWeights = new ArrayList<>(weights);
+        //ArrayList<Double> avgWeights = new ArrayList<>(weights);
+        Weight avgWeights = weights.copy();
+
         int totalUpdates = 0;
 
         if (isTrain)

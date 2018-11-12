@@ -4,12 +4,12 @@ import java.util.HashMap;
 import java.util.Set;
 import java.util.concurrent.ThreadLocalRandom;
 
-public class Weight {
+class Weight {
 
     private HashMap<String, Double> weights;
     private double b;
 
-    public Weight() {
+    Weight() {
         weights = new HashMap<>();
         b = ThreadLocalRandom.current().nextDouble(0.0, 0.01);
     }

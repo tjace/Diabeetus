@@ -20,20 +20,16 @@ class Example {
         features = new HashMap<>();
 
         for (String each : pieces) {
-            if (!Character.isDigit(each.charAt(0))) {
-                switch (pieces[0]) {
-                    case "-1":
-                        label = false;
-                        break;
-                    case "+1":
-                        label = true;
-                        break;
-                    default:
-                        throw new Exception("bad first line :(");
-                }
-            } else {
-                String[] splits = each.split(":");
-                features.put(splits[0], Double.parseDouble(splits[1]));
+            switch (each) {
+                case "-1":
+                    label = false;
+                    break;
+                case "+1":
+                    label = true;
+                    break;
+                default:
+                    String[] splits = each.split(":");
+                    features.put(splits[0], Double.parseDouble(splits[1]));
             }
         }
     }

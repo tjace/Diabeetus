@@ -1,5 +1,5 @@
 <component name="ArtifactManager">
-  <artifact type="jar" build-on-make="true" name="Diabeetus:jar">
+  <artifact type="jar" name="Diabeetus:jar">
     <output-path>$PROJECT_DIR$/out/artifacts/Diabeetus_jar</output-path>
     <root id="archive" name="Diabeetus.jar">
       <element id="module-output" name="Diabeetus" />

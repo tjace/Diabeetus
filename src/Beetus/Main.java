@@ -10,17 +10,66 @@ public class Main {
             "src/CVSplits/training03.data", "src/CVSplits/training04.data"};
 
 
-    public static void main(String args[]) throws Exception {
-        simple();
-        decay();
-        margin();
-        average();
+    private static final String[] finalCrosses = new String[]{
+            "src/finalFiles/test01", "src/finalFiles/test02", "src/finalFiles/test03",
+            "src/finalFiles/test04", "src/finalFiles/test05"};
+
+    private static final String finalTrain = "src/finalFiles/data.train";
+    private static final String finalTest = "src/finalFiles/data.test";
+    private static final String finalEval = "src/finalFiles/data.eval.anon";
+    private static final String finalEvalIDs = "src/finalFiles/data.eval.anon.id";
+
+
+    enum Types {
+        SIMPLE, DECAY, MARGIN, AVERAGE;
     }
+
+
+    public static void main(String args[]) throws Exception {
+//        double simple = simple();
+//        double decay = decay();
+//        double margin = margin();
+//        double average = average();
+//
+//        System.out.println("Simple: " + simple);
+//        System.out.println("Decay: " + decay);
+//        System.out.println("Margin: " + margin);
+//        System.out.println("Average: " + average);
+
+
+        kaggle(); //We'll use average.
+    }
+
+    /**
+     * Creates a good set of weights, then outputs a file for the final project.
+     */
+    private static double kaggle() throws Exception {
+        ArrayList<Example> examples = GeneralUtil.readExamples(finalTrain);
+
+        //Cross-Validate for best hyper-parameter, on the eval file
+        //10 epochs per cross-validation check per rate.
+        double bestRate = AverageUtil.crossValidateRates(rates, finalCrosses);
+
+        System.out.println("The best Average learnRate was found to be " + bestRate);
+
+        //With best rate, train a new weightset on the .train file 20x
+        ArrayList<Double> averageWeights = AverageUtil.averagePerceptronEpochs(20, examples, bestRate, true);
+
+        //then guess on the eval file
+        double finalAccuracy = 1.0 - GeneralUtil.testError(averageWeights, finalTest);
+
+        System.out.println("Accuracy on the final is " + finalAccuracy);
+        System.out.println("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n\n");
+
+
+        return 0.0;
+    }
+
 
     /**
      * Runs all of the tests that are required to test the most basic version of Perceptron.
      */
-    private static void simple() throws Exception {
+    private static double simple() throws Exception {
         ArrayList<Example> examples = GeneralUtil.readExamples("src/diabetes.train");
 
         //Cross-Validate for best hyper-parameter
@@ -37,13 +86,15 @@ public class Main {
 
         System.out.println("Accuracy for Simple Perceptron is " + simpleAccuracy);
         System.out.println("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n\n");
+
+        return simpleAccuracy;
     }
 
     /**
      * Runs all of the tests that are needed for testing a version of Perceptron that implements a decaying learning rate.
-     *  - Rate decays with each epoch.
+     * - Rate decays with each epoch.
      */
-    private static void decay() throws Exception {
+    private static double decay() throws Exception {
         ArrayList<Example> examples = GeneralUtil.readExamples("src/diabetes.train");
 
         //Cross-Validate for best hyper-parameter
@@ -56,19 +107,20 @@ public class Main {
         ArrayList<Double> decayWeights = DecayUtil.decayPerceptronEpochs(20, examples, bestRate, true);
 
         //then test error on the .test file.
-        double marginAccuracy = 1.0 - GeneralUtil.testError(decayWeights, "src/diabetes.test");
+        double decayAccuracy = 1.0 - GeneralUtil.testError(decayWeights, "src/diabetes.test");
 
-        System.out.println("Accuracy for Decaying Perceptron is " + marginAccuracy);
+        System.out.println("Accuracy for Decaying Perceptron is " + decayAccuracy);
         System.out.println("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n\n");
+
+        return decayAccuracy;
     }
 
     /**
      * Runs all of the tests that are needed for testing a version of Perceptron that implements a learning margin rate.
-     *  - Rate decays with each epoch.
-     *  - Weights update even when guess is correct, if within margin
-     *
+     * - Rate decays with each epoch.
+     * - Weights update even when guess is correct, if within margin
      */
-    private static void margin() throws Exception {
+    private static double margin() throws Exception {
         ArrayList<Example> examples = GeneralUtil.readExamples("src/diabetes.train");
 
         //Cross-Validate for best hyper-parameter
@@ -88,12 +140,14 @@ public class Main {
 
         System.out.println("Accuracy for Margin Perceptron is " + marginAccuracy);
         System.out.println("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n\n");
+
+        return marginAccuracy;
     }
 
     /**
      * Runs all of the tests that are required to test the Averaged version of Perceptron.
      */
-    private static void average() throws Exception {
+    private static double average() throws Exception {
         ArrayList<Example> examples = GeneralUtil.readExamples("src/diabetes.train");
 
         //Cross-Validate for best hyper-parameter
@@ -110,5 +164,7 @@ public class Main {
 
         System.out.println("Accuracy for Average Perceptron is " + averageAccuracy);
         System.out.println("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n\n");
+
+        return averageAccuracy;
     }
 }

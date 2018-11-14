@@ -43,7 +43,7 @@ class DecayUtil {
                 ArrayList<Example> ex = GeneralUtil.readExamples(usedFiles);
 
                 //Using the rate for this run, epoch 10x over the targets
-                ArrayList<Double> weights = decayPerceptronEpochs(10, ex, rate, false);
+                Weight weights = decayPerceptronEpochs(10, ex, rate, false);
 
                 //Test the weights on the unused cross file
                 double thisError = GeneralUtil.testError(weights, testFile);
@@ -69,8 +69,9 @@ class DecayUtil {
      *
      * @return weights trained by running Decaying Perceptron a number of times
      */
-    static ArrayList<Double> decayPerceptronEpochs(int epochs, ArrayList<Example> examples, double learnRate, boolean isTrain) throws Exception {
-        ArrayList<Double> weights = GeneralUtil.smallRandoms(20);
+    static Weight decayPerceptronEpochs(int epochs, ArrayList<Example> examples, double learnRate, boolean isTrain) throws Exception {
+        //ArrayList<Double> weights = GeneralUtil.smallRandoms(20);
+        Weight weights = new Weight();
 
         return decayPerceptronEpochs(epochs, examples, weights, learnRate, isTrain);
     }
@@ -81,7 +82,7 @@ class DecayUtil {
      *
      * @return weights trained by running Decaying Perceptron a number of times
      */
-    private static ArrayList<Double> decayPerceptronEpochs(int epochs, ArrayList<Example> examples, ArrayList<Double> weights, double learnRate, boolean isTrain) throws Exception {
+    private static Weight decayPerceptronEpochs(int epochs, ArrayList<Example> examples, Weight weights, double learnRate, boolean isTrain) throws Exception {
         int totalUpdates = 0;
 
         if (isTrain)

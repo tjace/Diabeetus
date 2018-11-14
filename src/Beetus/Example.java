@@ -15,13 +15,14 @@ class Example {
     private boolean label;
     private HashMap<String, Double> features;
 
-    Example(String fullLine) throws Exception {
+    Example(String fullLine) {
         String[] pieces = fullLine.split(" ");
         features = new HashMap<>();
 
         for (String each : pieces) {
             switch (each) {
                 case "-1":
+
                     label = false;
                     break;
                 case "+1":
@@ -34,9 +35,11 @@ class Example {
         }
     }
 
+
     Double get(String n) {
         return features.get(n);
     }
+
 
     boolean getLabel() {
         return label;
@@ -48,6 +51,7 @@ class Example {
 
     Set<String> getAllKeys()  {
         return features.keySet();
+
     }
 }
 

@@ -22,10 +22,11 @@ class Example {
         for (String each : pieces) {
             switch (each) {
                 case "-1":
-
+                case "0":
                     label = false;
                     break;
                 case "+1":
+                case "1":
                     label = true;
                     break;
                 default:
@@ -49,7 +50,7 @@ class Example {
         return features.containsKey(key);
     }
 
-    Set<String> getAllKeys()  {
+    Set<String> getAllKeys() {
         return features.keySet();
 
     }

@@ -19,6 +19,8 @@ public class Main {
     private static final String finalTest = "src/finalFiles/data.test";
     private static final String finalEval = "src/finalFiles/data.eval.anon";
     private static final String finalEvalIDs = "src/finalFiles/data.eval.anon.id";
+    private static final String finalOutput = "src/finalFiles/output";
+
 
 
     enum Types {
@@ -54,13 +56,18 @@ public class Main {
         System.out.println("The best Average learnRate was found to be " + bestRate);
 
         //With best rate, train a new weightset on the .train file 20x
-        ArrayList<Double> averageWeights = AverageUtil.averagePerceptronEpochs(20, examples, bestRate, true);
+        Weight kaggleWeights = AverageUtil.averagePerceptronEpochs(20, examples, bestRate, true);
 
-        //then guess on the eval file
-        double finalAccuracy = 1.0 - GeneralUtil.testError(averageWeights, finalTest);
+        //then guess on the test file
+        double finalAccuracy = 1.0 - GeneralUtil.testError(kaggleWeights, finalTest);
 
         System.out.println("Accuracy on the final is " + finalAccuracy);
         System.out.println("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n\n");
+
+
+        //Finally, guess on the eval file, and print to another file the guesses.
+        ArrayList<Example> finalEvalExamples = GeneralUtil.readExamples(finalEval);
+        GeneralUtil.printTestGuesses(kaggleWeights, finalEvalExamples, finalEvalIDs, finalOutput);
 
 
         return 0.0;

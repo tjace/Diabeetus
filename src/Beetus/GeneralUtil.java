@@ -1,8 +1,8 @@
 package Beetus;
 
 import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.concurrent.ThreadLocalRandom;
 
 @SuppressWarnings("Duplicates")
@@ -34,7 +34,7 @@ class GeneralUtil {
         return sum >= 0;
     }
 
-    static double testError(Weight weights, String testFile) throws Exception {
+    static double testError(Weight weights, String testFile) {
         ArrayList<Example> ex = readExamples(testFile);
 
         double failed = 0;
@@ -56,7 +56,7 @@ class GeneralUtil {
      * @param files the files to read for the Examples
      * @return an ArrayList full of the examples from all given files
      */
-    static ArrayList<Example> readExamples(String[] files) throws Exception {
+    static ArrayList<Example> readExamples(String[] files) {
         ArrayList<Example> ret = new ArrayList<>();
 
         for (String file : files) {
@@ -73,7 +73,7 @@ class GeneralUtil {
      * @param fileName where the Example lines are read from
      * @return an ArrayList of read examples
      */
-    static ArrayList<Example> readExamples(String fileName) throws Exception {
+    static ArrayList<Example> readExamples(String fileName) {
         ArrayList<Example> ret = new ArrayList<>();
 
         BufferedReader reader = null;
@@ -120,7 +120,7 @@ class GeneralUtil {
     }
      */
 
-    static Double smallRandom() {
+    private static Double smallRandom() {
         return ThreadLocalRandom.current().nextDouble(0.0, 0.01);
     }
 
@@ -135,7 +135,7 @@ class GeneralUtil {
         }
     }
 
-    static void testVsDev(int epochNum, Weight weights) throws Exception {
+    static void testVsDev(int epochNum, Weight weights) {
         StringBuilder out = new StringBuilder("Epoch ");
         out.append(epochNum);
 
@@ -148,10 +148,10 @@ class GeneralUtil {
         System.out.println(out);
     }
 
-    public static void printTestGuesses(Weight weights, ArrayList<Example> evalExamples, String evalIDFile, String outputFile) throws Exception {
+    static void printTestGuesses(Weight weights, ArrayList<Example> evalExamples, String evalIDFile, String outputFile) throws Exception {
 
         //This is what will write the output.
-        PrintWriter writer = new PrintWriter(outputFile, "UTF-8");
+        PrintWriter writer = new PrintWriter(outputFile, StandardCharsets.UTF_8);
         writer.println("example_id,label");
 
         //This is for reading the IDs file
@@ -184,8 +184,8 @@ class GeneralUtil {
                 IOException e) {
             e.printStackTrace();
         } finally {
-            if (writer != null)
-                writer.close();
+            writer.close();
+
             if (evalReader != null) {
                 try {
                     evalReader.close();

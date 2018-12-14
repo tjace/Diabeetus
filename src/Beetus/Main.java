@@ -1,8 +1,8 @@
 package Beetus;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 
+@SuppressWarnings("Duplicates")
 public class Main {
 
     private static final double[] rates = new double[]{1.0, 0.1, 0.01};
@@ -20,6 +20,8 @@ public class Main {
     private static final String finalEval = "src/finalFiles/data.eval.anon";
     private static final String finalEvalIDs = "src/finalFiles/data.eval.anon.id";
     private static final String finalOutput = "src/finalFiles/output";
+    private static final String finalOutputMargin = "src/finalFiles/outputMargin";
+
 
 
 
@@ -41,6 +43,7 @@ public class Main {
 
 
         kaggle(); //We'll use average.
+        kaggleMargin(); //... and also margin
     }
 
     /**
@@ -71,6 +74,37 @@ public class Main {
 
 
         return 0.0;
+    }
+
+    /**
+     * Creates a good set of weights, then outputs a file for the final project.
+     */
+    private static void kaggleMargin() throws Exception
+    {
+        ArrayList<Example> examples = GeneralUtil.readExamples(finalTrain);
+
+        //Cross-Validate for best hyper-parameter, on the eval file
+        //10 epochs per cross-validation check per rate.
+        double[] bestRateAndMargin = MarginUtil.crossValidateRates(rates, finalCrosses);
+        double bestRate = bestRateAndMargin[0];
+        double bestMargin = bestRateAndMargin[1];
+
+        System.out.println("The best Margin (final) learnRate was found to be " + bestRate);
+        System.out.println("The best Margin (final) margin was found to be " + bestMargin);
+
+        //With best rate, train a new weightset on the .train file 20x
+        Weight kaggleWeights = MarginUtil.marginPerceptronEpochs(20, examples, bestRate, bestMargin, true);
+
+        //then guess on the test file
+        double finalAccuracy = 1.0 - GeneralUtil.testError(kaggleWeights, finalTest);
+
+        System.out.println("Accuracy on the final is " + finalAccuracy);
+        System.out.println("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n\n");
+
+
+        //Finally, guess on the eval file, and print to another file the guesses.
+        ArrayList<Example> finalEvalExamples = GeneralUtil.readExamples(finalEval);
+        GeneralUtil.printTestGuesses(kaggleWeights, finalEvalExamples, finalEvalIDs, finalOutputMargin);
     }
 
 
